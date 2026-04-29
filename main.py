@@ -26,7 +26,7 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
         while True:
             request_data = await websocket.receive_json()
             user_message = request_data.get("content")
-            
+
             try:
                 ai_answer = await get_ai_response(user_message)
             except Exception:
