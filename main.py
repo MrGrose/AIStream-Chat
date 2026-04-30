@@ -28,14 +28,13 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
             user_message = request_data.get("content")
 
             try:
-                ai_answer = await get_ai_response(user_message)
+                async for chunk in get_ai_response(user_message):
+                    await websocket.send_json(
+                        {
+                            "type": "ai_response_chunk",
+                            "content": chunk,
+                        }
+                    )
             except Exception:
                 logger.exception("Ошибка при получении ответа от ИИ")
                 continue
-
-            await websocket.send_json(
-                {
-                    "type": "ai_response_chunk",
-                    "content": ai_answer,
-                }
-            )
